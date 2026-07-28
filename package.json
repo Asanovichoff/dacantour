@@ -27,6 +27,10 @@
   "devDependencies": {
     "prettier": "^3.3.3"
   },
+  "//optionalDependencies": "npm records only the host platform's optional binaries in the lockfile (npm/cli#4828), so a lock generated on macOS leaves Linux CI without rollup's native module and Vitest won't start. Declaring it directly forces it into the lock; npm skips it on non-Linux machines via the package's own os/cpu constraints.",
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.62.3"
+  },
   "//overrides": "Pin ONE React across the workspace. Test libs accept React 18 or 19 as a peer, and npm will happily hoist 19 next to the app's 18 — which breaks rendering with 'A React Element from an older version of React was rendered'.",
   "overrides": {
     "react": "^18.3.1",

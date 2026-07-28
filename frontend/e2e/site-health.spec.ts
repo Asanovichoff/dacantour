@@ -31,9 +31,24 @@ test.describe("site health", () => {
   test("trip pages expose TouristTrip structured data", async ({ page }) => {
     await page.goto("/kyrgyzstan");
     await page.locator("a[href*='/kyrgyzstan/trips/']").first().click();
+    // Wait for the client-side navigation to land, otherwise we can read the
+    // previous page's <script> tags (this test was flaky in CI without it).
+    await page.waitForURL(/\/kyrgyzstan\/trips\/.+/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
-    const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
-    const parsed = blocks.map((b) => JSON.parse(b));
+    // Poll: the JSON-LD is streamed in with the RSC payload.
+    await expect
+      .poll(async () => {
+        const blocks = await page
+          .locator('script[type="application/ld+json"]')
+          .allTextContents();
+        return blocks.map((b) => JSON.parse(b)).some((d) => d["@type"] === "TouristTrip");
+      })
+      .toBe(true);
+
+    const parsed = (
+      await page.locator('script[type="application/ld+json"]').allTextContents()
+    ).map((b) => JSON.parse(b));
     const trip = parsed.find((d) => d["@type"] === "TouristTrip");
 
     expect(trip).toBeTruthy();

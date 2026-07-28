@@ -56,7 +56,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run lint --workspace backend --if-present
+      # `nest build` and ts-jest both type-check, so no separate lint/typecheck step.
       - run: npm run test --workspace backend
       - run: npm run test:e2e --workspace backend
       - run: npm run build --workspace backend

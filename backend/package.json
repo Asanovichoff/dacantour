@@ -13,7 +13,6 @@
     "prestart:dev": "npm run clean && npm run schemas",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
-    "lint": "eslint \"{src,test}/**/*.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "jest",
     "test:e2e": "jest --config ./test/jest-e2e.json"

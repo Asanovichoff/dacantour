@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --content-pad: clamp(1.25rem, 5vw, 4rem);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-sand text-ink font-sans antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+  ::selection {
+    background: #0E9C93;
+    color: #fff;
+  }
+
+  /* Visible keyboard focus everywhere (mouse users unaffected). */
+  :focus-visible {
+    outline: 2px solid #0E9C93;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  /* On dark sections the turquoise ring can be low-contrast — use white. */
+  .bg-ink :focus-visible,
+  .bg-pine :focus-visible {
+    outline-color: #ffffff;
+  }
+}
+
+/* Respect the OS "reduce motion" setting. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-content px-[var(--content-pad)];
+  }
+  .container-wide {
+    @apply mx-auto w-full max-w-wide px-[var(--content-pad)];
+  }
+  .overline {
+    @apply text-xs font-medium uppercase tracking-overline text-lake;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 ease-smooth;
+  }
+  .btn-primary {
+    @apply btn bg-lake text-white hover:bg-lake-dark hover:-translate-y-0.5 shadow-lg shadow-lake/20;
+  }
+  .btn-sun {
+    @apply btn bg-sun text-ink hover:brightness-105 hover:-translate-y-0.5 shadow-lg shadow-sun/25;
+  }
+  .btn-ghost {
+    @apply btn border border-white/30 text-white hover:bg-white/10 backdrop-blur-sm;
+  }
+  .btn-outline {
+    @apply btn border border-ink/15 text-ink hover:border-lake hover:text-lake;
+  }
+  .link-underline {
+    @apply relative after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full;
+  }
+}
+
+/* Smooth scrolling (Lenis) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Thin, brand-tinted scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #ECE3D2;
+}
+::-webkit-scrollbar-thumb {
+  background: #0A6E68;
+  border-radius: 999px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+.grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}

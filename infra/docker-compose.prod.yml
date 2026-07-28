@@ -1,0 +1,83 @@
+# Single-VM production stack (e.g. Oracle Cloud Always-Free).
+#
+#   docker compose -f infra/docker-compose.prod.yml up -d --build
+#
+# Frontend can also live on Vercel; this file lets you run everything on one host.
+# Provide all values via a real infra/.env (never commit it).
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  directus:
+    image: directus/directus:11
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8055:8055"
+    environment:
+      KEY: ${DIRECTUS_KEY}
+      SECRET: ${DIRECTUS_SECRET}
+      DB_CLIENT: pg
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      PUBLIC_URL: ${DIRECTUS_PUBLIC_URL}
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: ${FRONTEND_ORIGIN}
+    volumes:
+      - directus_uploads:/directus/uploads
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      DATABASE_URL: ${DATABASE_URL}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      TEAM_INBOX: ${TEAM_INBOX}
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - directus
+      - backend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_DIRECTUS_URL: ${DIRECTUS_PUBLIC_URL}
+      NEXT_PUBLIC_API_URL: ${BACKEND_PUBLIC_URL}
+
+volumes:
+  pgdata:
+  directus_uploads:

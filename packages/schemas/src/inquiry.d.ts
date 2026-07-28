@@ -1,0 +1,40 @@
+import { z } from "zod";
+export declare const InquiryType: z.ZodEnum<["general", "fixed-trip"]>;
+export declare const InquirySchema: z.ZodObject<{
+    type: z.ZodDefault<z.ZodEnum<["general", "fixed-trip"]>>;
+    tripSlug: z.ZodOptional<z.ZodString>;
+    tripTitle: z.ZodOptional<z.ZodString>;
+    departureLabel: z.ZodOptional<z.ZodString>;
+    name: z.ZodString;
+    email: z.ZodString;
+    phone: z.ZodUnion<[z.ZodOptional<z.ZodString>, z.ZodLiteral<"">]>;
+    groupSize: z.ZodOptional<z.ZodNumber>;
+    preferredDates: z.ZodUnion<[z.ZodOptional<z.ZodString>, z.ZodLiteral<"">]>;
+    message: z.ZodString;
+    company: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    type: "general" | "fixed-trip";
+    name: string;
+    email: string;
+    message: string;
+    tripSlug?: string | undefined;
+    tripTitle?: string | undefined;
+    departureLabel?: string | undefined;
+    phone?: string | undefined;
+    groupSize?: number | undefined;
+    preferredDates?: string | undefined;
+    company?: string | undefined;
+}, {
+    name: string;
+    email: string;
+    message: string;
+    type?: "general" | "fixed-trip" | undefined;
+    tripSlug?: string | undefined;
+    tripTitle?: string | undefined;
+    departureLabel?: string | undefined;
+    phone?: string | undefined;
+    groupSize?: number | undefined;
+    preferredDates?: string | undefined;
+    company?: string | undefined;
+}>;
+export type Inquiry = z.infer<typeof InquirySchema>;

@@ -77,6 +77,10 @@ and emails the team via **Resend**. Marketing pages are SSG/ISR for speed + SEO.
   (auto-run via `prestart`/`prebuild`) builds it to `packages/schemas/dist` first.
 - Node's `fetch` prefers IPv6 for `localhost`; Docker publishes on IPv4. Server-side
   calls to Directus use `127.0.0.1` (see `lib/cms.ts`, `cms/bootstrap.mjs`).
+- **CI uses `npm install`, not `npm ci`.** The lockfile is generated on macOS and npm
+  records only the host platform's optional binaries, so `npm ci` on Linux dies with
+  *"Cannot find module @rollup/rollup-linux-x64-gnu"* (npm/cli#4828). Next.js
+  re-downloads its SWC binary automatically; rollup/vitest does not.
 - **Dates:** never `new Date("2026-07-12")` for calendar dates — it parses as UTC
   midnight and renders a day early in US timezones. Use `parseCalendarDate` in
   `frontend/lib/utils.ts` (regression-tested).

@@ -22,7 +22,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # `npm install`, not `npm ci`: the lockfile is generated on macOS and npm
+      # records only the host platform's optional binaries, so `npm ci` on Linux
+      # fails with "Cannot find module @rollup/rollup-linux-x64-gnu".
+      # See https://github.com/npm/cli/issues/4828
+      - run: npm install --no-audit --no-fund
       - run: npm run lint --workspace frontend
       - run: npm run typecheck --workspace frontend
       - run: npm run test --workspace frontend
@@ -55,7 +59,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # `npm install`, not `npm ci`: the lockfile is generated on macOS and npm
+      # records only the host platform's optional binaries, so `npm ci` on Linux
+      # fails with "Cannot find module @rollup/rollup-linux-x64-gnu".
+      # See https://github.com/npm/cli/issues/4828
+      - run: npm install --no-audit --no-fund
       # `nest build` and ts-jest both type-check, so no separate lint/typecheck step.
       - run: npm run test --workspace backend
       - run: npm run test:e2e --workspace backend
@@ -70,7 +78,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # `npm install`, not `npm ci`: the lockfile is generated on macOS and npm
+      # records only the host platform's optional binaries, so `npm ci` on Linux
+      # fails with "Cannot find module @rollup/rollup-linux-x64-gnu".
+      # See https://github.com/npm/cli/issues/4828
+      - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
         working-directory: frontend
       - run: npm run test:e2e --workspace frontend
